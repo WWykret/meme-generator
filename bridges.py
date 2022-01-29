@@ -1,24 +1,26 @@
+from PIL import Image
+
 class IUiBridge:
-    def try_to_login(username, password, save_credentials):
+    def try_to_login(username: str, password: str, save_credentials: bool) -> bool:
         pass
 
-    def is_logged_in(self):
+    def is_logged_in(self) -> bool:
         pass
 
-    def next(self):
+    def next(self) -> Image:
         pass
 
-    def prev(self):
+    def prev(self) -> Image:
         pass
 
-    def rand(self):
+    def rand(self) -> Image:
         pass
 
-    def filter(self, filter_str):
+    def filter(self, filter_str: str) -> Image:
         pass
 
-    def compile(self, text0, text1):
+    def compile(self, text0: str, text1: str) -> Image:
         pass
 
-    def save(self):
+    def save(self) -> None:
         pass
