@@ -40,22 +40,30 @@ class App:
         submit_btn = tk.Button(self.canvas, text='Submit', command=login_with_params)
         submit_btn.grid(row=2, column=0, columnspan=2, stick='we', padx=10, pady=10)
 
+    def update_image(self, new_image_func):
+        new_image = new_image_func()
+        new_image.thumbnail((500, 500), Image.ANTIALIAS)
+        new_image = ImageTk.PhotoImage(new_image)
+        
+        self.image_label.configure(image = new_image)
+        self.image_label.image = new_image
+
     def get_images(self):
         img = Image.open('tests/meme1.jpg')
         img.thumbnail((500, 500), Image.ANTIALIAS)
 
         image = ImageTk.PhotoImage(img)
-        image_label = tk.Label(self.root, image=image)
-        image_label.image = image
-        image_label.grid(columnspan=3, column = 0, row = 0)
+        self.image_label = tk.Label(self.root, image=image)
+        self.image_label.image = image
+        self.image_label.grid(columnspan=3, column = 0, row = 0)
 
-        prev_btn = tk.Button(self.root, text='previous', command=self.bridge.prev)
+        prev_btn = tk.Button(self.root, text='previous', command=lambda: self.update_image(self.bridge.prev))
         prev_btn.grid(columnspan=1, row=1, column=0, stick='we')
 
-        rand_btn = tk.Button(self.root, text='random', command=self.bridge.rand)
+        rand_btn = tk.Button(self.root, text='random', command=lambda: self.update_image(self.bridge.rand))
         rand_btn.grid(columnspan=1, row=1, column=1, stick='we')
 
-        next_btn = tk.Button(self.root, text='next', command=self.bridge.next)
+        next_btn = tk.Button(self.root, text='next', command=lambda: self.update_image(self.bridge.nest))
         next_btn.grid(columnspan=1, row=1, column=2, stick='we')
 
         search_entry = tk.Entry(self.root)

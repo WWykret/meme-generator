@@ -1,6 +1,7 @@
 from bridges import IUiBridge
 import json
 import os.path
+from PIL import Image
 
 class ApiConnector(IUiBridge):
 
@@ -33,3 +34,6 @@ class ApiConnector(IUiBridge):
                 except KeyError:
                     print('credentials file corrupted!')
         return False
+
+    def rand(self):
+        return Image.open('tests/meme3.jpg')
