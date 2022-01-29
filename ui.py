@@ -2,24 +2,27 @@ import tkinter as tk
 from PIL import Image, ImageTk
 from tkinter import simpledialog
 from bridges import IUiBridge
+from typing import Tuple
 
 class App:
-    def __init__(self, bridge: IUiBridge):
+    def __init__(self, bridge: IUiBridge, image_size: Tuple[int, int] = (500,500)):
         self.bridge = bridge
+        self.image_size = image_size
 
         self.root = tk.Tk()
+        self.root.resizable(False, False)
         self.root.title('Meme Generator')
 
         self.setup_ui()
 
         tk.mainloop()
 
-    def submit_login(self, username, password, save_credentials):
+    def submit_login(self, username: str, password: str, save_credentials: bool) -> None:
         if self.bridge.try_to_login(username, password, save_credentials):
             self.canvas.destroy()
             self.setup_ui()
 
-    def get_credentials(self):
+    def get_credentials(self) -> None:
         username_label = tk.Label(self.canvas, text="Username:")
         username_label.grid(row=0, column=0, columnspan=1, stick='w', padx=10, pady=10)
 
@@ -40,31 +43,31 @@ class App:
         submit_btn = tk.Button(self.canvas, text='Submit', command=login_with_params)
         submit_btn.grid(row=2, column=0, columnspan=2, stick='we', padx=10, pady=10)
 
-    def update_image(self, new_image):
-        new_image.thumbnail((500, 500), Image.ANTIALIAS)
+    def update_image(self, new_image: Image) -> None:
+        new_image.thumbnail(self.image_size, Image.ANTIALIAS)
         new_image = ImageTk.PhotoImage(new_image)
 
         self.image_label.configure(image = new_image)
         self.image_label.image = new_image
 
-    def get_new_image(self, new_image_func):
+    def get_new_image(self, new_image_func: Image) -> None:
         self.update_image(new_image_func())
 
-    def filter_images(self, filter_str):
+    def filter_images(self, filter_str: str) -> None:
         new_image = self.bridge.filter(filter_str)
         if new_image is None:
             new_image = self.bridge.filter('')
         self.update_image(new_image)
 
-    def compile_image(self, text0, text1):
+    def compile_image(self, text0: str, text1: str) -> None:
         new_image = self.bridge.compile(text0, text1)
         if new_image is None:
             new_image = self.bridge.filter('')
         self.update_image(new_image)
 
-    def get_images(self):
+    def main_view(self) -> None:
         img = self.bridge.rand()
-        img.thumbnail((500, 500), Image.ANTIALIAS)
+        img.thumbnail(self.image_size, Image.ANTIALIAS)
 
         image = ImageTk.PhotoImage(img)
         self.image_label = tk.Label(self.root, image=image)
@@ -101,11 +104,11 @@ class App:
         save_btn = tk.Button(self.root, text='save', command=self.bridge.save)
         save_btn.grid(columnspan=1, row=5, column=2, stick='we')
 
-    def setup_ui(self):
+    def setup_ui(self) -> None:
         self.canvas = tk.Canvas(self.root, width=500, height=500)
         self.canvas.grid(columnspan=3)
 
         if not self.bridge.is_logged_in():
             self.get_credentials()
         else:
-            self.get_images()
+            self.main_view()
