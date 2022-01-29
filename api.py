@@ -2,8 +2,15 @@ from bridges import IUiBridge
 import json
 import os.path
 from PIL import Image
+import requests
+import random
+from io import BytesIO
 
 class ApiConnector(IUiBridge):
+    def __init__(self):
+        all_tempaltes = requests.get('https://api.imgflip.com/get_memes').json()['data']['memes']
+        self.templates = list(filter(lambda template: template['box_count'] == 2, all_tempaltes))
+        self.template_index = 0
 
     def try_to_login(self, username, password, save_credentials):
         if (not username or not password):
@@ -35,5 +42,22 @@ class ApiConnector(IUiBridge):
                     print('credentials file corrupted!')
         return False
 
+    def get_current_template(self):
+        response = requests.get(self.templates[self.template_index]['url'])
+        return Image.open(BytesIO(response.content))
+
     def rand(self):
-        return Image.open('tests/meme3.jpg')
+        self.template_index = random.randint(0, len(self.templates))
+        return self.get_current_template()
+
+    def next(self):
+        self.template_index += 1
+        if self.template_index >= len(self.templates):
+            self.template_index = 0
+        return self.get_current_template()
+
+    def prev(self):
+        self.template_index -= 1
+        if self.template_index < 0:
+            self.template_index = len(self.templates) - 1
+        return self.get_current_template()
