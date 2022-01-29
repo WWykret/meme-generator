@@ -5,16 +5,17 @@ from PIL import Image
 import requests
 import random
 from io import BytesIO
-from datetime import datetime
 from credentials import ICredentialManager
+from loggers import ILogger
 
 class ApiConnector(IUiBridge):
-    def __init__(self, credential_manager: ICredentialManager):
+    def __init__(self, credential_manager: ICredentialManager, logger: ILogger):
         self.url_to_save = None
         self.username = None
         self.password = None
 
         self.credential_manager = credential_manager
+        self.logger = logger
         
         self.get_templates_from_filter('')
 
@@ -86,10 +87,7 @@ class ApiConnector(IUiBridge):
         }
         response = requests.post('https://api.imgflip.com/caption_image', data).json()
         if not response['success']:
-            # print(response['error_message'])
-            with open('logs.txt', 'a') as logs:
-                now = datetime.now()
-                logs.write(f'{now.strftime("%d/%m/%Y %H:%M")} --- {response["error_message"]}\n')
+            self.logger.log(response['error_message'], include_date=True)
             return None
 
         meme = self.get_template(response['data']['url'])

@@ -1,8 +1,12 @@
 from typing import Tuple
 import json
 import os.path
+from loggers import ILogger
 
 class ICredentialManager:
+    def __init__(self, logger: ILogger) -> None:
+        pass
+
     def try_to_login(self, username: str, password: str) -> bool:
         pass
 
@@ -13,7 +17,8 @@ class ICredentialManager:
         pass
 
 class LocalCredentialManager(ICredentialManager):
-    def __init__(self):
+    def __init__(self, logger: ILogger):
+        self.logger = logger
         self.credential_file = 'credentials.json'
 
     def try_to_login(self, username: str, password: str) -> bool:
@@ -37,6 +42,6 @@ class LocalCredentialManager(ICredentialManager):
                 try:
                     return data['username'], data['password']
                 except KeyError:
-                    print('credentials file corrupted!')
+                    self.logger.log('credentials file corrupted!', include_date=True)
         
         return None, None
