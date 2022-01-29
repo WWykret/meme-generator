@@ -22,7 +22,7 @@ class ApiConnector(IUiBridge):
         if (not username or not password):
             return False
 
-        print(username,password,save_credentials)
+        # print(username,password,save_credentials)
         self.username = username
         self.password = password
         
