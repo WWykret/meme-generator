@@ -52,6 +52,10 @@ class ApiConnector(IUiBridge):
         response = requests.get(self.templates[self.template_index]['url'])
         return Image.open(BytesIO(response.content))
 
+    def get_template(self, url):
+        response = requests.get(url)
+        return Image.open(BytesIO(response.content))
+
     def rand(self):
         self.template_index = random.randint(0, len(self.templates) - 1)
         return self.get_current_template()
@@ -73,3 +77,18 @@ class ApiConnector(IUiBridge):
         if len(self.templates) == 0:
             return None
         return self.get_current_template()
+
+    def compile(self, text0, text1):
+        data = {
+            'username':self.username,
+            'password':self.password,
+            'text0':text0,
+            'text1':text1,
+            'template_id':self.templates[self.template_index]['id']
+        }
+        response = requests.post('https://api.imgflip.com/caption_image', data).json()
+        if not response['success']:
+            print(response['error_message'])
+            return None
+
+        return self.get_template(response['data']['url'])

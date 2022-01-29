@@ -17,5 +17,5 @@ class IUiBridge:
     def filter(self, filter_str):
         pass
 
-    def compile(self):
+    def compile(self, text0, text1):
         pass

@@ -56,6 +56,11 @@ class App:
             new_image = self.bridge.filter('')
         self.update_image(new_image)
 
+    def compile_image(self, text0, text1):
+        new_image = self.bridge.compile(text0, text1)
+        if new_image is None:
+            new_image = self.bridge.filter('')
+        self.update_image(new_image)
 
     def get_images(self):
         img = self.bridge.rand()
@@ -90,7 +95,7 @@ class App:
         text_1.insert(-1, 'Caption 2...')
         text_1.grid(columnspan=3, row=4, column=0, stick='we')
 
-        preview_btn = tk.Button(self.root, text='preview', command=lambda: self.bridge.compile)
+        preview_btn = tk.Button(self.root, text='preview', command=lambda: self.compile_image(text_0.get(), text_1.get()))
         preview_btn.grid(columnspan=2, row=5, column=0, stick='we')
 
         save_btn = tk.Button(self.root, text='save', command=lambda: self.bridge.save)
