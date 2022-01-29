@@ -5,6 +5,7 @@ from PIL import Image
 import requests
 import random
 from io import BytesIO
+from datetime import datetime
 
 class ApiConnector(IUiBridge):
     def __init__(self):
@@ -89,7 +90,10 @@ class ApiConnector(IUiBridge):
         }
         response = requests.post('https://api.imgflip.com/caption_image', data).json()
         if not response['success']:
-            print(response['error_message'])
+            # print(response['error_message'])
+            with open('logs.txt', 'a') as logs:
+                now = datetime.now()
+                logs.write(f'{now.strftime("%d/%m/%Y %H:%M")} --- {response["error_message"]}\n')
             return None
 
         meme = self.get_template(response['data']['url'])
