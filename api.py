@@ -8,9 +8,15 @@ from io import BytesIO
 
 class ApiConnector(IUiBridge):
     def __init__(self):
+        self.get_templates_from_filter('')
+
+    def get_templates_from_filter(self, filter_str):
         all_tempaltes = requests.get('https://api.imgflip.com/get_memes').json()['data']['memes']
-        self.templates = list(filter(lambda template: template['box_count'] == 2, all_tempaltes))
+        correct_box_templates = filter(lambda template: template['box_count'] == 2, all_tempaltes)
+        self.templates = list(filter(lambda template: filter_str.lower() in template['name'].lower(), correct_box_templates))
         self.template_index = 0
+        for i, tmp in enumerate(self.templates):
+            print(i, tmp['name'])
 
     def try_to_login(self, username, password, save_credentials):
         if (not username or not password):
@@ -47,7 +53,7 @@ class ApiConnector(IUiBridge):
         return Image.open(BytesIO(response.content))
 
     def rand(self):
-        self.template_index = random.randint(0, len(self.templates))
+        self.template_index = random.randint(0, len(self.templates) - 1)
         return self.get_current_template()
 
     def next(self):
@@ -60,4 +66,10 @@ class ApiConnector(IUiBridge):
         self.template_index -= 1
         if self.template_index < 0:
             self.template_index = len(self.templates) - 1
+        return self.get_current_template()
+
+    def filter(self, filter_str):
+        self.get_templates_from_filter(filter_str)
+        if len(self.templates) == 0:
+            return None
         return self.get_current_template()
