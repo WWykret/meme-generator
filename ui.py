@@ -98,7 +98,7 @@ class App:
         preview_btn = tk.Button(self.root, text='preview', command=lambda: self.compile_image(text_0.get(), text_1.get()))
         preview_btn.grid(columnspan=2, row=5, column=0, stick='we')
 
-        save_btn = tk.Button(self.root, text='save', command=lambda: self.bridge.save)
+        save_btn = tk.Button(self.root, text='save', command=self.bridge.save)
         save_btn.grid(columnspan=1, row=5, column=2, stick='we')
 
     def setup_ui(self):

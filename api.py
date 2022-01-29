@@ -8,6 +8,7 @@ from io import BytesIO
 
 class ApiConnector(IUiBridge):
     def __init__(self):
+        self.url_to_save = None
         self.get_templates_from_filter('')
 
     def get_templates_from_filter(self, filter_str):
@@ -15,8 +16,6 @@ class ApiConnector(IUiBridge):
         correct_box_templates = filter(lambda template: template['box_count'] == 2, all_tempaltes)
         self.templates = list(filter(lambda template: filter_str.lower() in template['name'].lower(), correct_box_templates))
         self.template_index = 0
-        for i, tmp in enumerate(self.templates):
-            print(i, tmp['name'])
 
     def try_to_login(self, username, password, save_credentials):
         if (not username or not password):
@@ -49,10 +48,12 @@ class ApiConnector(IUiBridge):
         return False
 
     def get_current_template(self):
+        self.url_to_save = None
         response = requests.get(self.templates[self.template_index]['url'])
         return Image.open(BytesIO(response.content))
 
     def get_template(self, url):
+        self.url_to_save = None
         response = requests.get(url)
         return Image.open(BytesIO(response.content))
 
@@ -91,4 +92,20 @@ class ApiConnector(IUiBridge):
             print(response['error_message'])
             return None
 
-        return self.get_template(response['data']['url'])
+        meme = self.get_template(response['data']['url'])
+        self.url_to_save = response['data']['url']
+        return meme
+
+    def save(self):
+        if not self.url_to_save:
+            return
+
+        if not os.path.isdir('saved_memes'):
+            os.makedirs('saved_memes')
+
+        counter = 1
+        while os.path.isfile(f'saved_memes/meme{counter}.jpg'):
+            counter += 1
+        
+        meme = self.get_template(self.url_to_save)
+        meme.save(f'saved_memes/meme{counter}.jpg')

@@ -19,3 +19,6 @@ class IUiBridge:
 
     def compile(self, text0, text1):
         pass
+
+    def save(self):
+        pass
