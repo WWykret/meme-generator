@@ -6,10 +6,16 @@ import requests
 import random
 from io import BytesIO
 from datetime import datetime
+from credentials import ICredentialManager
 
 class ApiConnector(IUiBridge):
-    def __init__(self):
+    def __init__(self, credential_manager: ICredentialManager):
         self.url_to_save = None
+        self.username = None
+        self.password = None
+
+        self.credential_manager = credential_manager
+        
         self.get_templates_from_filter('')
 
     def get_templates_from_filter(self, filter_str):
@@ -19,34 +25,24 @@ class ApiConnector(IUiBridge):
         self.template_index = 0
 
     def try_to_login(self, username, password, save_credentials):
-        if (not username or not password):
+        if not self.credential_manager.try_to_login(username, password):
             return False
 
-        # print(username,password,save_credentials)
         self.username = username
         self.password = password
         
         if save_credentials:
-            data = {'username':username, 'password':password}
-            with open('credentials.json', 'w') as cred_file:
-                json.dump(data, cred_file)
+            self.credential_manager.save_credentials(username, password)
 
         return True
 
     def is_logged_in(self):
-        if hasattr(self, 'username') and hasattr(self, 'password'):
+        if self.username is not None and self.password is not None:
             return True
 
-        if os.path.isfile('credentials.json'):
-            with open('credentials.json', 'r') as cred_file:
-                data = json.load(cred_file)
-                try:
-                    self.username = data['username']
-                    self.password = data['password']
-                    return True
-                except KeyError:
-                    print('credentials file corrupted!')
-        return False
+        self.username, self.password = self.credential_manager.load_credentials()
+
+        return self.username is not None and self.password is not None
 
     def get_current_template(self):
         self.url_to_save = None
