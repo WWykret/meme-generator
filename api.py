@@ -1,6 +1,4 @@
 from bridges import IUiBridge
-import json
-import os.path
 from PIL import Image
 import requests
 import random
@@ -19,10 +17,11 @@ class ApiConnector(IUiBridge):
         self.saver = saver
         self.logger = logger
         
+        self.api_endpoint = 'https://api.imgflip.com'
         self.get_templates_from_filter('')
 
     def get_templates_from_filter(self, filter_str):
-        all_tempaltes = requests.get('https://api.imgflip.com/get_memes').json()['data']['memes']
+        all_tempaltes = requests.get(f'{self.api_endpoint}/get_memes').json()['data']['memes']
         correct_box_templates = filter(lambda template: template['box_count'] == 2, all_tempaltes)
         self.templates = list(filter(lambda template: filter_str.lower() in template['name'].lower(), correct_box_templates))
         self.template_index = 0
@@ -87,7 +86,7 @@ class ApiConnector(IUiBridge):
             'text1':text1,
             'template_id':self.templates[self.template_index]['id']
         }
-        response = requests.post('https://api.imgflip.com/caption_image', data).json()
+        response = requests.post(f'{self.api_endpoint}/caption_image', data).json()
         if not response['success']:
             self.logger.log(response['error_message'], include_date=True)
             return None
