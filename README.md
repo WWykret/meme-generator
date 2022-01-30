@@ -52,16 +52,16 @@ The program was written in Python using Tkinter for creating GUI, [imgflip](http
 ## Examples of program effects
 
 #### Example. 1
-![example1](https://github.com/WWykret/Webcam-Image-Transformer/blob/main/examples/example1.jpg)
+![example1](https://github.com/WWykret/meme-generator/blob/main/examples/example1.jpg)
 
 #### Example. 2
-![example2](https://github.com/WWykret/Webcam-Image-Transformer/blob/main/examples/example2.jpg)
+![example2](https://github.com/WWykret/meme-generator/blob/main/examples/example2.jpg)
 
 #### Example. 3
-![example3](https://github.com/WWykret/Webcam-Image-Transformer/blob/main/examples/example3.jpg)
+![example3](https://github.com/WWykret/meme-generator/blob/main/examples/example3.jpg)
 
 #### Example. 4
-![example4](https://github.com/WWykret/Webcam-Image-Transformer/blob/main/examples/example4.jpg)
+![example4](https://github.com/WWykret/meme-generator/blob/main/examples/example4.jpg)
 
 ## Status
 
