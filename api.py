@@ -7,14 +7,16 @@ import random
 from io import BytesIO
 from credentials import ICredentialManager
 from loggers import ILogger
+from savers import IImageSaver
 
 class ApiConnector(IUiBridge):
-    def __init__(self, credential_manager: ICredentialManager, logger: ILogger):
+    def __init__(self, credential_manager: ICredentialManager, saver: IImageSaver, logger: ILogger):
         self.url_to_save = None
         self.username = None
         self.password = None
 
         self.credential_manager = credential_manager
+        self.saver = saver
         self.logger = logger
         
         self.get_templates_from_filter('')
@@ -98,12 +100,6 @@ class ApiConnector(IUiBridge):
         if not self.url_to_save:
             return
 
-        if not os.path.isdir('saved_memes'):
-            os.makedirs('saved_memes')
-
-        counter = 1
-        while os.path.isfile(f'saved_memes/meme{counter}.jpg'):
-            counter += 1
-        
         meme = self.get_template(self.url_to_save)
-        meme.save(f'saved_memes/meme{counter}.jpg')
+
+        self.saver.save_image(meme)
